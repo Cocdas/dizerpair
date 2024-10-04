@@ -1,30 +1,20 @@
 const express = require('express');
-const path = require('path'); // 'path' module එකත් use කරන්න
-const bodyParser = require("body-parser");
-
 const app = express();
+__path = process.cwd()
+const bodyParser = require("body-parser");
 const PORT = process.env.PORT || 8000;
-
-let code = require('./pair'); // pair code generator එක
-
-
+let code = require('./pair');
 require('events').EventEmitter.defaultMaxListeners = 500;
+app.use('/code', code);
 
+app.use('/',async (req, res, next) => {
+res.sendFile(__path + '/pair.html')
+})
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-
-app.use('/code', code);
-
-
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'pair.html'));
-});
-
-
 app.listen(PORT, () => {
-    console.log(`⏩ Server running on http://localhost:${PORT}`);
-});
+    console.log(`⏩ Server running on http://localhost:` + PORT)
+})
 
-module.exports = app;
+module.exports = app
