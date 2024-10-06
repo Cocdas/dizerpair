@@ -3,107 +3,109 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🔗 PAIR CODE</title>
+  <title>PAIR CODE</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <style>
-    /* Global Styling */
     body {
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
       margin: 0;
-      background-color: #1a1a1d;
+      background-color: #141414;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
       font-family: 'Arial', sans-serif;
       color: #fff;
     }
 
-    /* Container Styling */
     .container {
       display: flex;
       flex-direction: column;
       align-items: center;
     }
 
-    /* Box Styling */
     .box {
       width: 350px;
-      height: auto;
+      height: 400px;
       padding: 20px;
       position: relative;
       text-align: center;
-      background-color: rgba(72, 133, 237, 0.9); 
+      background-color: rgba(72, 133, 237, 0.8);
       border-radius: 15px;
-      box-shadow: 0 0 25px rgba(0, 0, 0, 0.8);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+      position: relative;
     }
 
-    /* Text and Header Styling */
-    .header-icon {
-      font-size: 50px;
-      color: #ffcb05;
-    }
-
-    #text {
-      font-size: 16px;
+    .centered-text {
       color: #ffffff;
+      font-size: 24px;
     }
 
-    h3 {
-      margin: 0;
-    }
-
-    h6 {
-      margin: 10px 0;
-      color: #f1f1f1;
-    }
-
-    /* Input Container Styling */
     .input-container {
       display: flex;
       background: #ffffff;
       border-radius: 1rem;
-      padding: 0.5rem;
+      padding: 0.3rem;
       gap: 0.3rem;
-      max-width: 350px;
+      max-width: 300px;
       width: 100%;
+      margin-top: 15px;
     }
 
     .input-container input {
       border-radius: 0.8rem 0 0 0.8rem;
-      background: #1a1a1d; 
-      width: 85%;
+      background: #000000;
+      width: 89%;
+      flex-basis: 75%;
       padding: 1rem;
       border: none;
-      border-left: 4px solid #ffcb05;
+      border-left: 2px solid #075e54;
       color: #ecf0f1;
       transition: all 0.2s ease-in-out;
-      font-size: 16px;
     }
 
     .input-container input:focus {
-      border-left: 4px solid #ffcb05;
+      border-left: 2px solid #34d399;
       outline: none;
-      box-shadow: inset 13px 13px 10px #ffcb05, inset -13px -13px 10px #2c3e50;
+      box-shadow: inset 13px 13px 10px #075e54, inset -13px -13px 10px #2c3e50;
     }
 
     .input-container button {
+      flex-basis: 25%;
       padding: 1rem;
-      background: #25d366; 
+      background: #25d366;
       font-weight: 900;
-      letter-spacing: 0.2rem;
+      letter-spacing: 0.3rem;
       text-transform: uppercase;
       color: white;
       border: none;
+      width: 100%;
       border-radius: 0 1rem 1rem 0;
-      transition: all 0.3s ease-in-out;
+      transition: all 0.2s ease-in-out;
     }
 
     .input-container button:hover {
-      background: #2980b9; 
-      cursor: pointer;
+      background: #2980b9;
     }
 
-    /* Loading Spinner Styling */
+    #waiting-message {
+      color: #ffffff;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 500px) {
+      .input-container {
+        flex-direction: column;
+      }
+
+      .input-container input,
+      .input-container button {
+        border-radius: 0.8rem;
+      }
+    }
+
     #loading-spinner {
       display: none;
       color: white;
@@ -111,32 +113,15 @@
     }
 
     .fa-spinner {
-      animation: spin 1.5s linear infinite;
+      animation: spin 2s linear infinite;
     }
 
     @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    /* Responsive Styling */
-    @media (max-width: 500px) {
-      .box {
-        width: 95%;
+      0% {
+        transform: rotate(0deg);
       }
-
-      .input-container {
-        flex-direction: column;
-      }
-
-      .input-container input {
-        width: 100%;
-        border-radius: 0.8rem;
-      }
-
-      .input-container button {
-        border-radius: 0.8rem;
-        width: 100%;
+      100% {
+        transform: rotate(360deg);
       }
     }
   </style>
@@ -146,21 +131,20 @@
     <div class="main">
       <div class="box" id="box">
         <div id="text">
-          <div class="header-icon">📲</div>
-          <h3 class="centered-text">🔗 Link Your Phone Number</h3>
-          <br>
-          <h6>🔢 Enter your number with the country code to get started.</h6>
+          <i class="fa fa-user fa-3x"></i>
+          <h3 class="centered-text">🔗 Link with Phone Number</h3>
+          <p>🔢 Enter your number with country code</p>
           <div class="input-container">
             <input placeholder="+94729xxxxxx" type="number" id="number" name="">
-            <button id="submit">🚀 Submit</button>
+            <button id="submit">Submit</button>
           </div>
           <!-- Add the loading spinner -->
           <div id="loading-spinner">
-            <i class="fas fa-spinner fa-spin"></i> 🔄 Loading...
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Processing...</p>
           </div>
           <br>
-          <br>
-          <main id="pair"></main>
+          <div id="pair" style="margin-top: 20px;"></div>
         </div>
       </div>
     </div>
@@ -177,7 +161,7 @@
       let obj = document.getElementById("copy");
       await navigator.clipboard.writeText(obj.innerText.replace('CODE: ', ''));
       obj.innerText = "✔️ COPIED";
-      obj.style = "color:#ffcb05;font-weight:bold";
+      obj.style = "color:red;font-weight:bold";
       setTimeout(() => {
         obj.innerText = text;
         obj.style = "color:white;font-weight-bold";
@@ -187,9 +171,9 @@
     b.addEventListener("click", async (e) => {
       e.preventDefault();
       if (!c.value) {
-        a.innerHTML = '<span style="color:#ffcb05;font-weight:bold">❗ Please enter your WhatsApp number with the country code.</span><br><br>';
+        a.innerHTML = '<span style="color:red;font-weight:bold">❗ Please enter your WhatsApp number with country code.</span><br><br>';
       } else if (c.value.replace(/[^0-9]/g, "").length < 11) {
-        a.innerHTML = '<span style="color:#ffcb05;font-weight:bold">❗ Invalid number format. Please try again.</span><br><br>';
+        a.innerHTML = '<span style="color:red;font-weight:bold">❗ Invalid number format. Please try again.</span><br><br>';
       } else {
         const bc = c.value.replace(/[^0-9]/g, "");
         let bb = "";
@@ -197,7 +181,9 @@
         const cc = bc.split('');
         cc.map(a => {
           bbc += a;
-          if (bbc.length == 3 || bbc.length == 8) {
+          if (bbc.length == 3) {
+            bb += " " + a;
+          } else if (bbc.length == 8) {
             bb += " " + a;
           } else {
             bb += a;
@@ -206,18 +192,19 @@
         c.type = "text";
         c.value = "+" + bb;
         c.style = "color:white;font-size:20px";
+        
         // Show the loading spinner
         document.getElementById("loading-spinner").style.display = "block";
         a.innerHTML = ''; // Clear the previous content
 
         try {
-          let { data } = await axios(`/code?number=${bc}`);
+          let { data } = await axios.get(`/code?number=${bc}`);
           let code = data.code || "❗ Service Unavailable";
           a.innerHTML = `<font id="copy" onclick="Copy()" style="color:red;font-weight:bold" size="5">CODE: <span style="color:white;font-weight:bold">${code}</span></font><br><br><br>`;
         } catch (error) {
-          a.innerHTML = '<span style="color:red;font-weight:bold">❗ Error retrieving the code. Please try again later.</span><br><br>';
+          a.innerHTML = '<span style="color:red;font-weight:bold">❗ Error fetching the code. Please try again later.</span><br><br>';
         } finally {
-          // Hide the loading spinner when the process is complete
+          // Hide the loading spinner
           document.getElementById("loading-spinner").style.display = "none";
         }
       }
