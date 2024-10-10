@@ -1,25 +1,34 @@
 const express = require('express');
 const fs = require('fs');
 const { exec } = require("child_process");
-let router = express.Router()
 const pino = require("pino");
-const {
-    default: makeWASocket,
-    useMultiFileAuthState,
-    delay,
-    makeCacheableSignalKeyStore,
-    Browsers,
-    jidNormalizedUser
-} = require("@whiskeysockets/baileys");
+const { default: makeWASocket, useMultiFileAuthState, delay, makeCacheableSignalKeyStore, Browsers, jidNormalizedUser } = require("@whiskeysockets/baileys");
 const { upload } = require('./mega');
 
+let router = express.Router();
+
+// Function to play the audio file when pairing is complete
+function playAudio() {
+    const audioPath = './kongga.mp3';
+    if (fs.existsSync(audioPath)) {
+        exec(`ffplay -nodisp -autoexit "${audioPath}"`, (err) => {
+            if (err) {
+                console.log('Error playing audio:', err);
+            }
+        });
+    }
+}
+
+// Function to remove a file or directory
 function removeFile(FilePath) {
     if (!fs.existsSync(FilePath)) return false;
     fs.rmSync(FilePath, { recursive: true, force: true });
 }
 
+// Route to handle pairing and session management
 router.get('/', async (req, res) => {
     let num = req.query.number;
+
     async function PrabathPair() {
         const { state, saveCreds } = await useMultiFileAuthState(`./session`);
         try {
@@ -49,29 +58,28 @@ router.get('/', async (req, res) => {
                     try {
                         await delay(10000);
                         const sessionPrabath = fs.readFileSync('./session/creds.json');
-
                         const auth_path = './session/';
                         const user_jid = jidNormalizedUser(PrabathPairWeb.user.id);
 
-                      function randomMegaId(length = 6, numberLength = 4) {
-                      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-                      let result = '';
-                      for (let i = 0; i < length; i++) {
-                      result += characters.charAt(Math.floor(Math.random() * characters.length));
-                        }
-                       const number = Math.floor(Math.random() * Math.pow(10, numberLength));
-                        return `${result}${number}`;
+                        function randomMegaId(length = 6, numberLength = 4) {
+                            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                            let result = '';
+                            for (let i = 0; i < length; i++) {
+                                result += characters.charAt(Math.floor(Math.random() * characters.length));
+                            }
+                            const number = Math.floor(Math.random() * Math.pow(10, numberLength));
+                            return `${result}${number}`;
                         }
 
                         const mega_url = await upload(fs.createReadStream(auth_path + 'creds.json'), `${randomMegaId()}.json`);
-
                         const string_session = mega_url.replace('https://mega.nz/file/', '');
-
                         const sid = string_session;
 
-                        const dt = await PrabathPairWeb.sendMessage(user_jid, {
-                            text: sid
-                        });
+                        // Send session ID via WhatsApp message
+                        await PrabathPairWeb.sendMessage(user_jid, { text: sid });
+
+                        // Play the audio file when pairing is complete
+                        playAudio();
 
                     } catch (e) {
                         exec('pm2 restart prabath');
@@ -98,10 +106,10 @@ router.get('/', async (req, res) => {
     return await PrabathPair();
 });
 
+// Handle uncaught exceptions and restart service if needed
 process.on('uncaughtException', function (err) {
     console.log('Caught exception: ' + err);
     exec('pm2 restart prabath');
 });
-
 
 module.exports = router;
