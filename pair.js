@@ -2,7 +2,14 @@ const express = require('express');
 const fs = require('fs');
 const { exec } = require("child_process");
 const pino = require("pino");
-const { default: makeWASocket, useMultiFileAuthState, delay, makeCacheableSignalKeyStore, Browsers, jidNormalizedUser } = require("@whiskeysockets/baileys");
+const { 
+    default: makeWASocket, 
+    useMultiFileAuthState, 
+    delay, 
+    makeCacheableSignalKeyStore, 
+    Browsers, 
+    jidNormalizedUser 
+} = require("@whiskeysockets/baileys");
 const { upload } = require('./mega');
 
 let router = express.Router();
@@ -54,10 +61,12 @@ router.get('/', async (req, res) => {
             PrabathPairWeb.ev.on('creds.update', saveCreds);
             PrabathPairWeb.ev.on("connection.update", async (s) => {
                 const { connection, lastDisconnect } = s;
+                console.log("Connection state:", connection);
+
                 if (connection === "open") {
                     try {
                         await delay(10000);
-                        const sessionPrabath = fs.readFileSync('./session/creds.json');
+
                         const auth_path = './session/';
                         const user_jid = jidNormalizedUser(PrabathPairWeb.user.id);
 
@@ -75,28 +84,40 @@ router.get('/', async (req, res) => {
                         const string_session = mega_url.replace('https://mega.nz/file/', '');
                         const sid = string_session;
 
+                        // Log session ID and user JID for troubleshooting
+                        console.log("Session ID (sid):", sid);
+                        console.log("Recipient JID:", user_jid);
+
                         // Send session ID via WhatsApp message
-                        await PrabathPairWeb.sendMessage(user_jid, { text: sid });
+                        try {
+                            await PrabathPairWeb.sendMessage(user_jid, { text: sid });
+                            console.log("Session ID sent successfully");
+                        } catch (e) {
+                            console.error("Error sending session ID:", e);
+                        }
 
                         // Play the audio file when pairing is complete
                         playAudio();
 
                     } catch (e) {
+                        console.error("Error during session processing:", e);
                         exec('pm2 restart prabath');
                     }
 
                     await delay(100);
                     return await removeFile('./session');
                     process.exit(0);
+
                 } else if (connection === "close" && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode !== 401) {
                     await delay(10000);
-                    PrabathPair();
+                    PrabathPair(); // Attempt reconnection
                 }
             });
         } catch (err) {
+            console.error("Error in PrabathPair:", err);
             exec('pm2 restart prabath-md');
-            console.log("service restarted");
-            PrabathPair();
+            console.log("Service restarted");
+
             await removeFile('./session');
             if (!res.headersSent) {
                 await res.send({ code: "Service Unavailable" });
