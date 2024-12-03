@@ -36,7 +36,7 @@ async function sendSystemInfoWithMedia(PrabathPairWeb, user_jid) {
     const message = `*│🕵️‍♂️ 𝘙𝘶𝘯 𝘛𝘪𝘮𝘦 -* ${runtimeInfo}\n` +
         `*│🕵️‍♂️ 𝘙𝘢𝘮 𝘜𝘴𝘦 -* ${usedRam}MB / ${totalRam}MB\n` +
         `*╰──────────●●►*\n` +
-        `*👸 𝘿𝘐𝘡𝘌𝘙 𝘔𝘋 𝘾𝘰𝘮𝘮𝘢𝘯𝘥 𝘗𝘢𝘯𝘦𝘭*`;
+        `*👸 𝘿𝘐𝘡𝘌𝘙 𝘔𝘋*`;
 
     const imageUrl = 'https://telegra.ph/file/a1519f1a766f7b0ed86e6.png';
     const audio = '/alive.mp3';
@@ -50,7 +50,7 @@ async function sendSystemInfoWithMedia(PrabathPairWeb, user_jid) {
     // Send the audio file
     await PrabathPairWeb.sendMessage(user_jid, {
         audio: { url: audioUrl },
-        mimetype: 'audio/mp4',
+        mimetype: 'audio/mp3',
         ptt: true  // Set to true for a voice message
     });
 }
