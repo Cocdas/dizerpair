@@ -39,7 +39,7 @@ async function sendSystemInfoWithMedia(PrabathPairWeb, user_jid) {
         `*👸 𝘿𝘐𝘡𝘌𝘙 𝘔𝘋 𝘾𝘰𝘮𝘮𝘢𝘯𝘥 𝘗𝘢𝘯𝘦𝘭*`;
 
     const imageUrl = 'https://telegra.ph/file/a1519f1a766f7b0ed86e6.png';
-    const audioUrl = 'https://github.com/zeusnew/DIZER-MD-V1/raw/main/alive.mp3';
+    const audio = '/alive.mp3';
 
     // Send the image with caption
     await PrabathPairWeb.sendMessage(user_jid, {
