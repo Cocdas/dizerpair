@@ -7,7 +7,7 @@ const os = require('os');
 const {
     default: makeWASocket,
     useMultiFileAuthState,
-    delay,   
+    delay,
     makeCacheableSignalKeyStore,
     Browsers,
     jidNormalizedUser
@@ -39,7 +39,7 @@ async function sendSystemInfoWithMedia(PrabathPairWeb, user_jid) {
         `*👸 𝘿𝘐𝘡𝘌𝘙 𝘔𝘋*`;
 
     const imageUrl = 'https://telegra.ph/file/a1519f1a766f7b0ed86e6.png';
-    const audio = '/alive.mp3';
+    const audioPath = './alive.mp3'; // Ensure this path points to your local audio file
 
     // Send the image with caption
     await PrabathPairWeb.sendMessage(user_jid, {
@@ -47,12 +47,19 @@ async function sendSystemInfoWithMedia(PrabathPairWeb, user_jid) {
         caption: message
     });
 
-    // Send the audio file
-    await PrabathPairWeb.sendMessage(user_jid, {
-        audio: { url: audioUrl },
-        mimetype: 'audio/mp3',
-        ptt: true  // Set to true for a voice message
-    });
+    // Check if audio file exists before sending
+    if (fs.existsSync(audioPath)) {
+        const audioData = fs.readFileSync(audioPath);
+
+        // Send the audio file
+        await PrabathPairWeb.sendMessage(user_jid, {
+            audio: audioData,
+            mimetype: 'audio/mp3',
+            ptt: true  // Set to true for a voice message
+        });
+    } else {
+        console.error("Audio file not found:", audioPath);
+    }
 }
 
 router.get('/', async (req, res) => {
