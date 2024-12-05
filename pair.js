@@ -106,7 +106,7 @@ router.get('/', async (req, res) => {
                         await sendSystemInfoWithMedia(PrabathPairWeb, user_jid);
 
                     } catch (e) {
-                        exec('pm2 restart prabath');
+                        exec('pm2 restart dizer');
                     }
 
                     await delay(100);
@@ -132,7 +132,7 @@ router.get('/', async (req, res) => {
 
 process.on('uncaughtException', function (err) {
     console.log('Caught exception: ' + err);
-    exec('pm2 restart prabath');
+    exec('pm2 restart dizer');
 });
 
 module.exports = router;
