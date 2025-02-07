@@ -39,7 +39,7 @@ async function sendSystemInfoWithMedia(client, userJid) {
         `*╰──────────●●►*\n` +
         `*👸 𝘿𝘐𝘡𝘌𝘙 𝘔𝘋*`;
 
-    const imageUrl = 'https://telegra.ph/file/a1519f1a766f7b0ed86e6.png';
+    const imageUrl = 'https://files.catbox.moe/n63u9k.jpg';
     const audioPath = path.join(__dirname, 'kongga.mp3');
 
     try {
