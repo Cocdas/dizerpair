@@ -40,26 +40,41 @@ async function sendSystemInfoWithMedia(client, userJid) {
         `*👸 𝘿𝘐𝘡𝘌𝘙 𝘔𝘋*`;
 
     const imageUrl = 'https://files.catbox.moe/n63u9k.jpg';
-    const audioPath = path.join(__dirname, 'alive.ogg'); // Updated to use alive.ogg
+    const audioPath = path.join(__dirname, 'alive.ogg');
 
     try {
+        // Send image first
         await client.sendMessage(userJid, {
             image: { url: imageUrl },
             caption: message
         });
 
+        // Then send audio
         if (fs.existsSync(audioPath)) {
-            const audioData = fs.readFileSync(audioPath);
             await client.sendMessage(userJid, {
-                audio: audioData,
-                mimetype: 'audio/ogg', // Updated mimetype for .ogg files
+                audio: { url: audioPath },
+                mimetype: 'audio/ogg',
                 ptt: true
+            }, {
+                upload: true // Ensure the file is uploaded properly
             });
+            logger.info("Audio file sent successfully");
         } else {
             logger.error("Audio file not found: %s", audioPath);
+            await client.sendMessage(userJid, { 
+                text: "⚠️ Audio file not found in the server" 
+            });
         }
     } catch (error) {
         logger.error("Failed to send media: %s", error.message);
+        // Attempt to send error message if media fails
+        try {
+            await client.sendMessage(userJid, { 
+                text: `❌ Error sending media: ${error.message}` 
+            });
+        } catch (err) {
+            logger.error("Also failed to send error message: %s", err.message);
+        }
     }
 }
 
