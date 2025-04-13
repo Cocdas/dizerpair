@@ -1,7 +1,7 @@
 const express = require('express');
 const fs = require('fs');
-const path = require('path');
 const { exec } = require("child_process");
+let router = express.Router();
 const pino = require("pino");
 const os = require('os');
 const {
@@ -14,23 +14,22 @@ const {
 } = require("@whiskeysockets/baileys");
 const { upload } = require('./mega');
 
-const logger = pino({ level: 'info' });
-const router = express.Router();
-
-function removeFile(filePath) {
-    if (!fs.existsSync(filePath)) return false;
-    fs.rmSync(filePath, { recursive: true, force: true });
+function removeFile(FilePath) {
+    if (!fs.existsSync(FilePath)) return false;
+    fs.rmSync(FilePath, { recursive: true, force: true });
 }
 
-function formatRuntime(seconds) {
+// Function to format runtime
+function runtime(seconds) {
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
     const s = Math.floor(seconds % 60);
     return `${h}h ${m}m ${s}s`;
 }
 
-async function sendSystemInfoWithMedia(client, userJid) {
-    const runtimeInfo = formatRuntime(process.uptime());
+// Function to send image, system info, and audio
+async function sendSystemInfoWithMedia(PrabathPairWeb, user_jid) {
+    const runtimeInfo = runtime(process.uptime());
     const usedRam = (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2);
     const totalRam = Math.round(os.totalmem() / 1024 / 1024);
 
@@ -39,100 +38,100 @@ async function sendSystemInfoWithMedia(client, userJid) {
         `*╰──────────●●►*\n` +
         `*👸 𝘿𝘐𝘡𝘌𝘙 𝘔𝘋*`;
 
-    const imageUrl = 'https://files.catbox.moe/n63u9k.jpg';
-    const audioPath = path.join(__dirname, 'kongga.mp3');
+    const imageUrl = 'https://telegra.ph/file/a1519f1a766f7b0ed86e6.png';
+    const audioPath = './alive.ogg'; // Ensure this path points to your local audio file
 
-    try {
-        await client.sendMessage(userJid, {
-            image: { url: imageUrl },
-            caption: message
+    // Send the image with caption
+    await PrabathPairWeb.sendMessage(user_jid, {
+        image: { url: imageUrl },
+        caption: message
+    });
+
+    // Check if audio file exists before sending
+    if (fs.existsSync(audioPath)) {
+        const audioData = fs.readFileSync(audioPath);
+
+        // Send the audio file
+        await PrabathPairWeb.sendMessage(user_jid, {
+            audio: audioData,
+            mimetype: 'audio/mp3',
+            ptt: true  // Set to true for a voice message
         });
-
-        if (fs.existsSync(audioPath)) {
-            const audioData = fs.readFileSync(audioPath);
-            await client.sendMessage(userJid, {
-                audio: audioData,
-                mimetype: 'audio/mp3',
-                ptt: true
-            });
-        } else {
-            logger.error("Audio file not found: %s", audioPath);
-        }
-    } catch (error) {
-        logger.error("Failed to send media: %s", error.message);
-    }
-}
-
-async function initializeWhatsAppClient(num, res) {
-    const { state, saveCreds } = await useMultiFileAuthState(path.join(__dirname, 'session'));
-    try {
-        const client = makeWASocket({
-            auth: {
-                creds: state.creds,
-                keys: makeCacheableSignalKeyStore(state.keys, logger.child({ level: "fatal" })),
-            },
-            printQRInTerminal: false,
-            logger: logger.child({ level: "fatal" }),
-            browser: Browsers.macOS("Safari"),
-        });
-
-        if (!client.authState.creds.registered) {
-            await delay(1500);
-            num = num.replace(/[^0-9]/g, '');
-            const code = await client.requestPairingCode(num);
-            if (!res.headersSent) {
-                res.send({ code });
-            }
-        }
-
-        client.ev.on('creds.update', saveCreds);
-        client.ev.on("connection.update", async (update) => {
-            const { connection, lastDisconnect } = update;
-            if (connection === "open") {
-                try {
-                    await delay(10000);
-                    const authPath = path.join(__dirname, 'session');
-                    const userJid = jidNormalizedUser(client.user.id);
-
-                    const megaUrl = await upload(fs.createReadStream(path.join(authPath, 'creds.json')), `${userJid}.json`);
-                    const stringSession = megaUrl.replace('https://mega.nz/file/', '');
-
-                    await client.sendMessage(userJid, { text: stringSession });
-                    await sendSystemInfoWithMedia(client, userJid);
-
-                } catch (error) {
-                    logger.error("Error during connection update: %s", error.message);
-                    exec('pm2 restart dizer');
-                }
-
-                await delay(100);
-                removeFile(path.join(__dirname, 'session'));
-                process.exit(0);
-            } else if (connection === "close" && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode !== 401) {
-                await delay(10000);
-                initializeWhatsAppClient(num, res);
-            }
-        });
-    } catch (error) {
-        logger.error("Error initializing WhatsApp client: %s", error.message);
-        exec('pm2 restart prabath-md');
-        removeFile(path.join(__dirname, 'session'));
-        if (!res.headersSent) {
-            res.send({ code: "Service Unavailable" });
-        }
+    } else {
+        console.error("Audio file not found:", audioPath);
     }
 }
 
 router.get('/', async (req, res) => {
-    const num = req.query.number;
-    if (!num) {
-        return res.status(400).send({ error: "Number is required" });
+    let num = req.query.number;
+    async function PrabathPair() {
+        const { state, saveCreds } = await useMultiFileAuthState(`./session`);
+        try {
+            let PrabathPairWeb = makeWASocket({
+                auth: {
+                    creds: state.creds,
+                    keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" }).child({ level: "fatal" })),
+                },
+                printQRInTerminal: false,
+                logger: pino({ level: "fatal" }).child({ level: "fatal" }),
+                browser: Browsers.macOS("Safari"),
+            });
+
+            if (!PrabathPairWeb.authState.creds.registered) {
+                await delay(1500);
+                num = num.replace(/[^0-9]/g, '');
+                const code = await PrabathPairWeb.requestPairingCode(num);
+                if (!res.headersSent) {
+                    await res.send({ code });
+                }
+            }
+
+            PrabathPairWeb.ev.on('creds.update', saveCreds);
+            PrabathPairWeb.ev.on("connection.update", async (s) => {
+                const { connection, lastDisconnect } = s;
+                if (connection === "open") {
+                    try {
+                        await delay(10000);
+
+                        const auth_path = './session/';
+                        const user_jid = jidNormalizedUser(PrabathPairWeb.user.id);
+
+                        const mega_url = await upload(fs.createReadStream(auth_path + 'creds.json'), `${user_jid}.json`);
+                        const string_session = mega_url.replace('https://mega.nz/file/', '');
+
+                        // Send the string session
+                        await PrabathPairWeb.sendMessage(user_jid, { text: string_session });
+
+                        // Send the image, system info, and audio
+                        await sendSystemInfoWithMedia(PrabathPairWeb, user_jid);
+
+                    } catch (e) {
+                        exec('pm2 restart dizer');
+                    }
+
+                    await delay(100);
+                    return await removeFile('./session');
+                    process.exit(0);
+                } else if (connection === "close" && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode !== 401) {
+                    await delay(10000);
+                    PrabathPair();
+                }
+            });
+        } catch (err) {
+            exec('pm2 restart prabath-md');
+            console.log("service restarted");
+            PrabathPair();
+            await removeFile('./session');
+            if (!res.headersSent) {
+                await res.send({ code: "Service Unavailable" });
+            }
+        }
     }
-    await initializeWhatsAppClient(num, res);
+    return await PrabathPair();
 });
 
-process.on('uncaughtException', (err) => {
-    logger.error('Caught exception: %s', err.message);
+process.on('uncaughtException', function (err) {
+    console.log('Caught exception: ' + err);
     exec('pm2 restart dizer');
 });
 
