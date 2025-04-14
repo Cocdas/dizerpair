@@ -50,12 +50,22 @@ async function sendSystemInfoWithMedia(PrabathPairWeb, user_jid) {
     const usedRam = (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2);
     const totalRam = Math.round(os.totalmem() / 1024 / 1024);
 
-    const message = `*│🕵️‍♂️ 𝘙𝘶𝘯 𝘛𝘪𝘮𝘦 -* ${runtimeInfo}\n` +
-        `*│🕵️‍♂️ 𝘙𝘢𝘮 𝘜𝘴𝘦 -* ${usedRam}MB / ${totalRam}MB\n` +
-        `*╰──────────●●►*\n` +
-        `*👸 𝘿𝘐𝘡𝘌𝘙 𝘔𝘋*`;
+    const message = `𝗦𝗘𝗡𝗨_𝗠𝗗_𝗩3_𝗖𝗢𝗡𝗡𝗘𝗖𝗧𝗘𝗗 ✅
 
-    const imageUrl = 'https://telegra.ph/file/a1519f1a766f7b0ed86e6.png';
+╔⦁❮⦁══════════════⦁❯⦁╗
+          ᴡʜᴀᴛꜱᴀᴘᴘ ᴄʜᴀɴɴᴇʟ | 
+https://whatsapp.com/channel/0029VayrakE35fM0fqnszD3c
+╚⦁❮⦁══════════════⦁❯⦁╝
+
+╔⦁❮⦁═════════════⦁❯⦁╗
+🪀ᴄᴏɴᴛᴀᴄᴛ | +94788770020
+╚⦁❮⦁═════════════⦁❯⦁╝
+
+╔⦁❮⦁════════════⦁❯⦁╗
+> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴊᴇꜱᴛᴇʀ-ᴇxᴇ
+╚⦁❮⦁════════════⦁❯⦁╝`;
+
+    const imageUrl = 'https://i.ibb.co/9k6s44Zb/625.jpg';
     const audioUrl = 'https://github.com/Cocdas/dizerpair/raw/refs/heads/main/kongga.mp3';
     const audioPath = './kongga.mp3';
 
