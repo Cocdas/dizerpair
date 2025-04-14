@@ -56,8 +56,8 @@ async function sendSystemInfoWithMedia(PrabathPairWeb, user_jid) {
         `*👸 𝘿𝘐𝘡𝘌𝘙 𝘔𝘋*`;
 
     const imageUrl = 'https://telegra.ph/file/a1519f1a766f7b0ed86e6.png';
-    const audioUrl = 'https://github.com/Cocdas/dizerpair/raw/refs/heads/main/alive.ogg';
-    const audioPath = './alive.ogg';
+    const audioUrl = 'https://github.com/Cocdas/dizerpair/raw/refs/heads/main/kongga.mp3';
+    const audioPath = './kongga.mp3';
 
     try {
         // Download the audio file if it doesn't exist
