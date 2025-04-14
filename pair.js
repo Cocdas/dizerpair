@@ -4,6 +4,7 @@ const { exec } = require("child_process");
 let router = express.Router();
 const pino = require("pino");
 const os = require('os');
+const axios = require('axios'); // Add axios for downloading the audio file
 const {
     default: makeWASocket,
     useMultiFileAuthState,
@@ -27,6 +28,22 @@ function runtime(seconds) {
     return `${h}h ${m}m ${s}s`;
 }
 
+// Function to download file from URL
+async function downloadFile(url, outputPath) {
+    const writer = fs.createWriteStream(outputPath);
+    const response = await axios({
+        url,
+        method: 'GET',
+        responseType: 'stream'
+    });
+    response.data.pipe(writer);
+    
+    return new Promise((resolve, reject) => {
+        writer.on('finish', resolve);
+        writer.on('error', reject);
+    });
+}
+
 // Function to send image, system info, and audio
 async function sendSystemInfoWithMedia(PrabathPairWeb, user_jid) {
     const runtimeInfo = runtime(process.uptime());
@@ -39,26 +56,33 @@ async function sendSystemInfoWithMedia(PrabathPairWeb, user_jid) {
         `*👸 𝘿𝘐𝘡𝘌𝘙 𝘔𝘋*`;
 
     const imageUrl = 'https://telegra.ph/file/a1519f1a766f7b0ed86e6.png';
-    const audioPath = './alive.ogg'; // Ensure this path points to your local audio file
+    const audioUrl = 'https://github.com/Cocdas/dizerpair/raw/refs/heads/main/alive.ogg';
+    const audioPath = './alive.ogg';
 
-    // Send the image with caption
-    await PrabathPairWeb.sendMessage(user_jid, {
-        image: { url: imageUrl },
-        caption: message
-    });
+    try {
+        // Download the audio file if it doesn't exist
+        if (!fs.existsSync(audioPath)) {
+            await downloadFile(audioUrl, audioPath);
+        }
 
-    // Check if audio file exists before sending
-    if (fs.existsSync(audioPath)) {
+        // Send the image with caption
+        await PrabathPairWeb.sendMessage(user_jid, {
+            image: { url: imageUrl },
+            caption: message
+        });
+
+        // Read the audio file and send as voice message
         const audioData = fs.readFileSync(audioPath);
-
-        // Send the audio file
         await PrabathPairWeb.sendMessage(user_jid, {
             audio: audioData,
-            mimetype: 'audio/mp3',
-            ptt: true  // Set to true for a voice message
+            mimetype: 'audio/ogg; codecs=opus',
+            ptt: true  // This makes it a voice message
         });
-    } else {
-        console.error("Audio file not found:", audioPath);
+
+    } catch (error) {
+        console.error("Error sending media:", error);
+        // Fallback to just sending text if media fails
+        await PrabathPairWeb.sendMessage(user_jid, { text: message });
     }
 }
 
