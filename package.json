@@ -9,7 +9,7 @@
      "restart": "pm2 restart dizer"
     },
   "dependencies": {
-    "@whiskeysockets/baileys": "6.6.0",
+   "baileys-mod": "^6.8.5",
     "qrcode": "^1.5.3",
     "awesome-phonenumber": "^2.64.0",
     "pino": "^8.1.0",
@@ -22,3 +22,7 @@
     "pm2": "^5.2.0"
    }
 }
+
+
+
+
